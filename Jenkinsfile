@@ -35,7 +35,8 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig-kind', variable: 'KUBECONFIG')]) {
                     sh '''
-                        kubectl set image deployment/meteo-api api=$IMAGE:$TAG || kubectl create deployment meteo-api --image=$IMAGE:$TAG --port=8000
+                        kubectl delete deployment meteo-api --ignore-not-found=true
+                        kubectl create deployment meteo-api --image=$IMAGE:$TAG --port=8000
                         kubectl rollout status deployment/meteo-api --timeout=300s
                         kubectl get pods -l app=meteo-api
                     '''
